@@ -72,11 +72,95 @@
         user-select: none;
       }
 
+      .ui-corner-btn {
+        position: absolute;
+        left: 2vh;
+        bottom: 2vh;
+        font-family: monogram, monospace;
+        background: white;
+        color: black;
+        border: 3px solid black;
+        border-radius: 0;
+        width: 3rem;
+        height: 3rem;
+        padding: 0;
+        font-size: inherit;
+        line-height: 1;
+        cursor: pointer;
+        box-shadow: 4px 4px 0 black;
+        image-rendering: pixelated;
+      }
+
+      .ui-corner-btn:active {
+        transform: translate(2px, 2px);
+        box-shadow: 2px 2px 0 black;
+      }
+
+      #guide-container {
+        position: absolute;
+        left: 2vh;
+        bottom: calc(2vh + 3.5rem);
+        background: white;
+        border-radius: 3px;
+        outline-style: solid;
+        padding: 1rem 1.25rem;
+        filter: drop-shadow(0 0 0.75rem rgb(112, 112, 112));
+        user-select: none;
+      }
+
+      #guide-container a {
+        color: inherit;
+      }
+
+      .guide-repo {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid rgb(220, 220, 220);
+      }
+
+      #guide-container ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      #guide-container li {
+        margin: 0.1rem 0;
+      }
+
+      .key {
+        display: inline-block;
+        background: rgb(238, 238, 238);
+        border-radius: 3px;
+        padding: 0 0.4rem;
+        margin-right: 0.3rem;
+        outline: 1px solid rgb(180, 180, 180);
+      }
+
+      #interact-prompt {
+        position: absolute;
+        left: 50%;
+        top: 38%;
+        transform: translate(-50%, -100%);
+        background: rgba(40, 40, 40, 0.45);
+        color: rgb(238, 238, 238);
+        border-radius: 3px;
+        padding: 0.25rem 0.75rem;
+        user-select: none;
+        white-space: nowrap;
+      }
+
+      #interact-prompt .key {
+        background: rgba(255, 255, 255, 0.2);
+        outline: none;
+        color: inherit;
+      }
+
     </style>
     <div id="app">
       <div id="ui">
         <p class="note">Tap/Click around to move</p>
-        <div id="textbox-container" style="display: none"> 
+        <div id="textbox-container" style="display: none">
           <div id="textbox">
             <p id="dialogue" class="ui-text"></p>
             <div class="btn-container">
@@ -84,9 +168,35 @@
             </div>
           </div>
         </div>
+        <div id="interact-prompt" class="ui-text" style="display: none">
+          <span class="key">Enter</span> to interact
+        </div>
+        <div id="guide-container" style="display: none">
+          <ul class="ui-text">
+            <li><span class="key">&uarr;</span> Move up</li>
+            <li><span class="key">&darr;</span> Move down</li>
+            <li><span class="key">&larr;</span> Move left</li>
+            <li><span class="key">&rarr;</span> Move right</li>
+            <li><span class="key">Shift</span> + arrow to run</li>
+            <li><span class="key">Click</span> Move to point</li>
+          </ul>
+          <p class="ui-text guide-repo">
+            <a href="https://github.com/RickardOtv/2d-portfolio" target="_blank">GitHub repo</a>
+          </p>
+        </div>
+        <button id="guide-toggle" class="ui-corner-btn" aria-label="Help">?</button>
       </div>
       <canvas id="game"></canvas>
     </div>
+    <script>
+      (() => {
+        const btn = document.getElementById("guide-toggle");
+        const guide = document.getElementById("guide-container");
+        btn.addEventListener("click", () => {
+          guide.style.display = guide.style.display === "none" ? "block" : "none";
+        });
+      })();
+    </script>
     <script type="module" src="src/main.js"></script>
   </body>
 </html>

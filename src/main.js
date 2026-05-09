@@ -49,6 +49,8 @@ k.scene("main", async() => {
 
 
     
+    let nearbyTarget = null;
+
     for (const layer of layers) {
         //Hocus Pocus for boundaries
         if (layer.name === "boundaries") {
@@ -61,18 +63,21 @@ k.scene("main", async() => {
               k.pos(boundary.x, boundary.y),
               boundary.name,
             ]);
-    
-            if (boundary.name) {
+
+            if (boundary.name && dialogueData[boundary.name]) {
+              const cx = (boundary.x + boundary.width / 2) * scaleFactor;
+              const cy = (boundary.y + boundary.height / 2) * scaleFactor;
               player.onCollide(boundary.name, () => {
-                player.isInDialogue = true;
-                displayDialogue(
-                  dialogueData[boundary.name],
-                  () => (player.isInDialogue = false)
-                );
+                nearbyTarget = { name: boundary.name, cx, cy };
+              });
+              player.onCollideEnd(boundary.name, () => {
+                if (nearbyTarget && nearbyTarget.name === boundary.name) {
+                  nearbyTarget = null;
+                }
               });
             }
           }
-    
+
           continue;
         }
         //Hocus Pocus for spawnpoint
@@ -97,8 +102,39 @@ k.scene("main", async() => {
         setCamScale(k);
     });
 
+    const interactPrompt = document.getElementById("interact-prompt");
+
+    function isFacingTarget() {
+      if (!nearbyTarget) return false;
+      const dx = nearbyTarget.cx - player.pos.x;
+      const dy = nearbyTarget.cy - player.pos.y;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        return (dx > 0 && player.direction === "right") ||
+               (dx < 0 && player.direction === "left");
+      }
+      return (dy > 0 && player.direction === "down") ||
+             (dy < 0 && player.direction === "up");
+    }
+
     k.onUpdate(() => {
         k.camPos(player.pos.x, player.pos.y + 100);
+        const show = !player.isInDialogue && isFacingTarget();
+        interactPrompt.style.display = show ? "block" : "none";
+    });
+
+    k.onKeyPress("enter", () => {
+      if (player.isInDialogue) {
+        document.getElementById("close").click();
+        return;
+      }
+      if (!isFacingTarget()) return;
+      const name = nearbyTarget.name;
+      player.isInDialogue = true;
+      interactPrompt.style.display = "none";
+      displayDialogue(
+        dialogueData[name],
+        () => (player.isInDialogue = false)
+      );
     });
 
     k.onMouseDown((mouseBtn) => {

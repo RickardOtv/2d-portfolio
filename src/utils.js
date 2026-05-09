@@ -17,7 +17,7 @@ export function displayDialogue(text, onDisplayEnd) {
     }, 1);
   
     const closeBtn = document.getElementById("close");
-  
+
     function onCloseBtnClick() {
       onDisplayEnd();
       dialogueUI.style.display = "none";
@@ -25,14 +25,8 @@ export function displayDialogue(text, onDisplayEnd) {
       clearInterval(intervalRef);
       closeBtn.removeEventListener("click", onCloseBtnClick);
     }
-  
+
     closeBtn.addEventListener("click", onCloseBtnClick);
-  
-    addEventListener("keypress", (key) => {
-      if (key.code === "Enter") {
-        closeBtn.click();
-      }
-    });
   }
   
   export function setCamScale(k) {
